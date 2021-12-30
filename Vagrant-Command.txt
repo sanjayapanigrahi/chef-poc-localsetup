@@ -1,0 +1,116 @@
+Vagrant  Command
+--------------------
+vagrant up --provision
+vagrant ssh
+vagrant global-status
+vagrant destroy id
+vagrant global-status --prune
+
+--- Need to Perform SSH-ADD--
+cd ~
+eval `ssh-agent`
+ssh-add
+
+ssh-keygen - Workstation
+copy publickey file in node
+
+//Copy Zscaler cer ton trustedcert
+
+ssh-keyscan 172.28.128.28 >> ~/.ssh/known_hosts
+
+
+sudo ifconfig enp0s3 172.28.128.53 netmask 255.255.255.0
+
+------------------------------------------------------------------------------------------------------------------------
+////// On Nodes - Name(hostname) need to resolve to the ip
+    sudo hostnamectl set-hostname "app1" sudo hostnamectl set-hostname "app2" sudo hostnamectl set-hostname "lb"
+    sudo vi /etc/hosts (192.168.0.51 app1.local app1)(192.168.0.52 app2.local app2)(192.168.0.53 lb.local lb)
+    sudo hostnamectl set-hostname "workstation"
+    sudo vi /etc/hosts (192.168.0.10 workstation.local workstation
+                        192.168.0.51 app1.local app1
+                        192.168.0.52 app2.local app2
+                        192.168.0.53 lb.local lb)
+    ///Need to reboot
+    sudo reboot each vm
+    hostnamectl
+    hostname
+    hostname --fqdn
+    
+
+
+/////// On Workstation - 
+    ssh-keygen
+    eval `ssh-agent`
+    ssh-add
+    cat .ssh/id_rsa.pub
+    
+    on Node --
+    Add public key from workstation node (cat .ssh/id_rsa.pub) and paste in on .ssh/authorized_keys on each node.
+    
+
+----------------------------------------------------------------------------------------------------------------------------
+
+git config --global user.email "sanjaya.panigrahi@ibm.com"
+git config --global user.name "Sanjaya Panigrahi"
+
+knife bootstrap 192.168.0.53 -N lb1 -U vagrant --sudo
+knife node run_list add lb1 recipe[install-myhaproxy] -- This will add as run list
+
+ knife bootstrap 192.168.0.52 -N app2 -U vagrant --sudo -r recipe[install-apache2] - This will add and execute the chef-client command on the host
+ knife bootstrap app1 -N app1 -U vagrant --sudo -r recipe[install-apache2]
+
+
+ knife role list
+ knife role from file app.rb lb.rb
+ knife role show app
+
+ knife node show app1
+
+  knife node run_list set lb1 "role[lb]"
+  knife node run_list set web1 "role[web]"
+    knife node run_list set web2 "role[web]"
+    knife node run_list set web3 "role[web]"
+     knife node run_list set web4 "role[web]"
+  knife node run_list set app2 "role[app]"
+
+
+  Search and Apply
+  knife search node  "*:*"
+  knife search node "*:*" -a hostname
+  knife search node "*:*" -a ipaddress
+  knife search node "*:*" -a fqdn
+
+  knife search node  "role:app" -a hostname
+  knife search node  "role:lb" -a hostname
+  
+   knife ssh "*:*" -a hostname "uptime"
+knife ssh "role:lb" -a fqdn "sudo chef-client --why-run" --dry run
+
+
+
+
+for i in `seq 1 5`;do curl http://192.168.0.51; done --lb1
+for i in `seq 1 5`;do curl http://192.168.0.52; done --lb2
+for i in `seq 1 5`;do curl http://192.168.0.53; done --web1
+
+knife bootstrap lb1 -N lb1 -U vagrant --sudo -y
+knife bootstrap lb2 -N lb2 -U vagrant --sudo -y
+knife bootstrap web1 -N web1 -U vagrant --sudo -y
+knife bootstrap web2 -N web2 -U vagrant --sudo -y
+knife bootstrap web3 -N web3 -U vagrant --sudo -y
+knife bootstrap web4 -N web4 -U vagrant --sudo -y
+
+knife node run_list set lb1 "role[lb]"
+knife node run_list set lb2 "role[lb]"
+knife node run_list set web1 "role[web]"
+knife node run_list set web2 "role[web]"
+knife node run_list set web3 "role[web]"
+knife node run_list set web4 "role[web]"
+
+knife ssh "role:web" -a fqdn "sudo chef-client"
+knife ssh "role:lb" -a fqdn "sudo chef-client"
+
+
+ERROR: Train::ClientError: Your SSH Agent has no keys added, and you have not specified a password or a key file
+eval `ssh-agent`
+ssh-add

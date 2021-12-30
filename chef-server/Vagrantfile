@@ -1,0 +1,36 @@
+### WORK IN PROGRESS
+
+$script = <<-'SCRIPT'
+echo "#############################################Copy SSL Root Certificate#############################################"
+sudo cp /vagrant/ZscalerRootCertificate.crt /usr/local/share/ca-certificates
+sudo update-ca-certificates --fresh
+sudo apt update
+sudo apt install resolvconf
+echo "################################################CA Certificate Refrshed################################################"
+wget https://packages.chef.io/files/stable/chef-server/14.10.23/ubuntu/20.04/chef-server-core_14.10.23-1_amd64.deb
+sudo dpkg -i chef-server-core_14.10.23-1_amd64.deb
+sudo chef-server-ctl reconfigure --chef-license=accept
+echo "================================================MANAGE - START==================================================="
+#sudo chef-server-ctl install chef-manage
+echo "================================================MANAGE - END====================================================="
+#sudo chef-server-ctl reconfigure
+#sudo chef-manage-ctl reconfigure
+echo "================================================USER & ORG - START======================================================"
+#sudo chef-server-ctl user-create demo-user sanjaya panigrahi sanjaya.panigrahi@ibm.com 'demo-user' --filename demo-user.pem
+#sudo chef-server-ctl org-create  demo-org "Demo Organisation" --association_user demo-user --filename demo-org.pem
+echo "================================================USER & ORG - END========================================================="
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/hirsute64"
+  config.vm.hostname ="chef-server-local"
+  config.vm.network "private_network", ip:"172.28.128.20"
+  config.vm.provider 'virtualbox' do |vb|
+    vb.memory = '5000'
+    vb.name = "chef-server-local"
+  end
+  config.vm.provision "shell", inline: $script
+end
+
+
+### WORK IN PROGRESS

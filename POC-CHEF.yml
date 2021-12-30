@@ -1,0 +1,62 @@
+========================================================================CHEF=============================================================================
+1. Three Component
+		- Chef Server 
+		- Chef WorkStation 
+		- Chef Node
+
+  Chef WorkStation --------> Chef Server <----Pull---- Chef Node
+
+2. Chef-Server
+		- https://api.chef.io/
+		- https://api.chef.io/organizations/chef-demo-s001/nodes  // Set an Organization
+		- Download the "Starter Kit"
+
+3. Chef WorkStation
+		- wget https://packages.chef.io/files/stable/chef-workstation/21.10.640/ubuntu/20.04/chef-workstation_21.10.640-1_amd64.deb
+		- dpkg -i chef-workstation_21.10.640-1_amd64.deb
+
+		- Copy "Starter Kit" which contain chef-repo
+		- Established Connection between Chef-Server and Chef-Workstation (Download the trusted certificate)
+			- knife ssl fetch
+			- knife ssl check
+4. Chef Node
+		- Bootstrap the node (This is to install chef-client on node) 
+			- knife bootstrap 172.28.128.50 -N chef-node-1 -U vagrant --sudo (Need to execute from Workstation)
+
+
+5. Cookbook 
+		- chef generate cookbook cookbooks/create-directory-cookbook
+		- cookstyle // To Validate the Syntax
+
+		- chef-client --local-mode cookbooks/create-directory-cookbook/recipes/default.rb --why-run // Dry Run and validate the action
+		- sudo chef-client --local-mode cookbooks/create-directory-cookbook/recipes/default.rb
+		
+		- sudo chef-client --local-mode --runlist recipe[create-directory-cookbook] --why-run 	    //For multiple recipe
+		- sudo chef-client --local-mode --runlist recipe[create-directory-cookbook]
+		
+		- knife upload cookbooks/create-directory-cookbook/		//To upload the cookbook to ChefServer
+		- knife node run_list add chef-node-2 recipe[create-directory-cookbook]  // Attach a cookbook to a node
+
+		- chef-client --why-run // From Chef Client
+		- sudo chef-client
+
+
+
+		- knife node show chef-node-1 -- It will show the details of the node along with Run List
+
+	-  knife bootstrap lb1 -N lb1 -U vagrant --sudo -r "receipe[install-myhaproxy]" -- bootstrap and add runlist -- Showing error for me
+	
+		- Search **
+		knife search node "*:*"
+		knife ssh "role:webserver" "sudo chef-client"
+		knife ssh "*:*" "sudo chef-client"
+
+		
+
+6. Other  Command
+		- knife node list
+		- knife node delete chef-node-1
+		- knife cookbook list
+		- knife cookbook delete httpd-cookbook
+
+========================================================================CHEF=============================================================================
