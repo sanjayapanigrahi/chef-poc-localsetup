@@ -91,7 +91,7 @@ As our goal is to install Load Balancer and Apache Web Application we need to wr
     ```
 
 ## Add recipe to a  node as runlist and execution from node
-We need to add a specific recipe(s) to a node to process the task. By using following command we can add the recipe to the run list.
+- We need to add a specific recipe(s) to a node to process the task. By using following command we can add the recipe to the run list.
     ```
     knife node run_list add lb1 recipe[install-lb-haproxy]
     ```
