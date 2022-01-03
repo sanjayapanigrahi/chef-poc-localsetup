@@ -1,5 +1,6 @@
 # chef-poc-localsetup
-Use Case - Local Setup (Workstation, Server and Nodes) along with Cookbook with Load Balancer (HA Proxy) on one Node to maintain load balancing Web App (Apache2) on two nodes.
+## Use Case 
+Local Setup (Workstation, Server and Nodes) along with Cookbook with Load Balancer (HA Proxy) on one Node to maintain load balancing Web App (Apache2) on two nodes.
 
 # Pre-requisite
     - Vagrant
@@ -26,6 +27,8 @@ Vagrant.configure("2") do |config|
     config.vm.box = "ubuntu/hirsute64"
 end
 ```
+Once the Vagrant File is ready we can use ```vagrant up``` command for server Provisioning and workstation installation.
+Use ```vagrant ssh``` to login to the workstation 
 
 ## Chef Workstation:
 To Configure Workstation, we are using Ubuntu server and the installation are done in automated way using Vagrant File and Shell Script.
@@ -60,6 +63,36 @@ SCRIPT
     ```knife ssl check``` -> It should show "successfully connected to api.chef.io"
 
 ### Bootstrap a node
+Bootstrap a node will install chef client on the specific node. We can do bootstrap a node from workstation by using below command.
+```
+knife bootstrap <hostname/ip> -N <Name to Display on Server> -U vagrant --sudo
+knife bootstrap lb1 -N lb1 -U vagrant --sudo -y
+knife bootstrap web1 -N web1 -U vagrant --sudo -y
+knife bootstrap web2 -N web2 -U vagrant --sudo -y
+```
+### Generate Cookbook and upload it to Chef Server
+As our goal is to install Load Balancer and Apache Web Application we need to write recipe.
+
+To generate a cookbook we can use following command:
+```
+chef generate cookbook cookbooks/install-lb-haproxy
+chef generate cookbook cookbooks/install-app-apache2
+```
+
+and to upload it we can use
+```
+knife upload cookbooks/<cookbook name>
+```
+### Add recipe to a  node as runlist and execution from node
+We need to add a specific recipe(s) to a node to process the task. By using following command we can add the recipe to the run list.
+```
+knife node run_list add lb1 recipe[install-lb-haproxy]
+```
+Upon succesfull addition of recipe as run list for a node we can login to the nodes and installation can be process autmaticly by using below command.
+```
+sudo chef-client
+```
+It will identify the recipe and do the needfull accordingly.
 
 
 
@@ -68,20 +101,18 @@ SCRIPT
     
 - Issue-1 - "ERROR: Train::ClientError: Your SSH Agent has no keys added, and you have not specified a password or a key file"
     Solution : 
-        ```shell
-        eval `ssh-agent`
-        ssh-add
-        ```
+    ```shell
+    eval `ssh-agent`
+    ssh-add
+    ```
 - Issue-2 - SSL Error on Ubuntu Server.
     Solution :
     ```shell
     sudo cp sslcerts.crt /usr/local/share/ca-certificates
     sudo update-ca-certificates --fresh
     ```
-
-
-- Issue-3 - 
-    Solution :
+- Issue-3 -  SSH Error while Bootstraping a node
+    Solution : Make sure the public key of workstation updated on authorized_key file of the node. As we are doing the bootstraping from workstation, ssh connectivity should be in place.
 
 - Issue-4 - 
     Solution :
