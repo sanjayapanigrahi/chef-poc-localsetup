@@ -94,6 +94,8 @@ sudo chef-client
 ```
 It will identify the recipe and do the needfull accordingly.
 
+### Execute the recipe on multiple nodes using Role based approach.
+
 
 
 
