@@ -16,59 +16,74 @@ As of now we are using Hosted Chef Server (api.chef.io).
 ## Local Chef Server
 Work In Progress
 
-## Chef Workstation:
-To Configure Workstation, we are using Ubuntu server and the installation are done in automated way using Vagrant File and Shell Script.
+## Chef Node
+To provision nodes, we are using Ubuntu server and the provision is done in automated way using Vagrant File.
 
-```
-$do_certs_update = <<-'SCRIPT'
-echo "#################################################Copy SSL Root Certificate (Ubuntu)#################################################"
-sudo cp /vagrant/ZscalerRootCertificate.crt /usr/local/share/ca-certificates
-sudo update-ca-certificates --fresh
-echo "#################################################CA Certificates Refreshed#################################################"
-SCRIPT
-
-$install_workstation = <<-'SCRIPT'
-echo "#################################################Workstation Installation  - START#################################################"
-sudo apt-get update
-sudo apt-get install tree
-wget https://packages.chef.io/files/stable/chef-workstation/21.10.640/ubuntu/20.04/chef-workstation_21.10.640-1_amd64.deb
-dpkg -i chef-workstation_21.10.640-1_amd64.deb
-echo "###########################################Workstation Installation  - SUCCESSFULLY DONE###########################################"
-sudo cp /vagrant/ZscalerRootCertificate.crt /home/vagrant/chef-starter/chef-repo/.chef/trusted_certs
-SCRIPT
-
+### Provisioning and Login using Vagrant
+-   Ubuntu Server Provisioning
+```vagrantfile 
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/hirsute64"
-
-  config.vm.define "workstation" do |node|
-    node.vm.hostname ="workstation"
-    node.vm.network "private_network", ip:"192.168.1.10"
-    config.vm.provider 'virtualbox' do |vm|
-      vm.name = "workstation"
-    end
-    
-    config.vm.synced_folder "../shared/", "/vagrant"
-    config.vm.synced_folder "../workspace/", "/home/vagrant/chef-starter"
-    config.vm.provision "shell", inline: $do_certs_update
-    config.vm.provision "shell", inline: $install_workstation
-  end
+    config.vm.box = "ubuntu/hirsute64"
 end
 ```
 
+## Chef Workstation:
+To Configure Workstation, we are using Ubuntu server and the installation are done in automated way using Vagrant File and Shell Script.
+
+### Provisioning and Login using Vagrant
+-   Ubuntu Server Provisioning
+```vagrantfile 
+Vagrant.configure("2") do |config|
+    config.vm.box = "ubuntu/hirsute64"
+    config.vm.synced_folder "../shared/", "/vagrant"
+    config.vm.provision "shell", inline: $install_workstation
+end
+```
+We can share the Files or Directory using ```synced_folder``` functionality of Vagrant for sharing purpose. This is usefull for sharing the STARTER_KIT we download from chef server.
+
+- Workstation Installation
+```shell
+$install_workstation = <<-'SCRIPT'
+wget https://packages.chef.io/files/stable/chef-workstation/21.10.640/ubuntu/20.04/chef-workstation_21.10.640-1_amd64.deb
+dpkg -i chef-workstation_21.10.640-1_amd64.deb
+SCRIPT
+```
+- Once the Vagrant File is ready we can use ```vagrant up``` command for server Provisioning and workstation installation.
+- Use ```vagrant ssh``` to login to the workstation and validate if chef is install or not by using ```chef --version```
+
+### Setting Starter Kit
+- Copy the Starter Kit from /vagrant (synced_folder) and placed in /home/vagrant/ (~) folder and extract it.
+- Navigate to "chef-starter/chef-repo"
+- To connect with chefserver we need to fetch the trusted certificate by using knife command.
+    ```knife ssl fetch```
+    Cross validate if the connection is established by using below command.
+    ```knife ssl check``` -> It should show "successfully connected to api.chef.io"
+
+### Bootstrap a node
+
+
+
 
 ## Challenges
-    - Issue-1 - "ERROR: Train::ClientError: Your SSH Agent has no keys added, and you have not specified a password or a key file"
+    
+- Issue-1 - "ERROR: Train::ClientError: Your SSH Agent has no keys added, and you have not specified a password or a key file"
     Solution : 
-        ```eval `ssh-agent` ```
-        ```ssh-add```
-    - Issue-2 - 
+        ```shell
+        eval `ssh-agent`
+        ssh-add
+        ```
+- Issue-2 - SSL Error on Ubuntu Server.
+    Solution :
+    ```shell
+    sudo cp sslcerts.crt /usr/local/share/ca-certificates
+    sudo update-ca-certificates --fresh
+    ```
+
+
+- Issue-3 - 
     Solution :
 
-
-    - Issue-3 - 
-    Solution :
-
-    - Issue-4 - 
+- Issue-4 - 
     Solution :
 
     - Issue-5 - 
