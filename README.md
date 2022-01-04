@@ -73,8 +73,7 @@ Note: We can share the Files or Directory using ```synced_folder``` functionalit
 
 ## Bootstrap a node
 Bootstrap a node will install chef client on the specific node. We can do bootstrap a node from workstation by using below command.
--  bootstrap <hostname/ip> -N <Name to Display on Server> -U vagrant --sudo
-
+bootstrap <hostname/ip> -N <Name to Display on Server> -U vagrant --sudo
 
     knife bootstrap lb1 -N lb1 -U vagrant --sudo -y
     knife bootstrap web1 -N web1 -U vagrant --sudo -y
