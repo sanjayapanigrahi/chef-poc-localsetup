@@ -77,11 +77,7 @@ Bootstrap a node will install chef client on the specific node. We can do bootst
 
     ```
     knife bootstrap lb1 -N lb1 -U vagrant --sudo -y
-    ```
-    ```
     knife bootstrap web1 -N web1 -U vagrant --sudo -y
-    ```
-    ```
     knife bootstrap web2 -N web2 -U vagrant --sudo -y
     ```
     
@@ -92,8 +88,6 @@ To generate a cookbook we can use following command:
 
     ```
     chef generate cookbook cookbooks/install-lb-haproxy
-    ```
-    ```
     chef generate cookbook cookbooks/install-app-apache2
     ```
 To upload it we can use
@@ -129,7 +123,7 @@ To upload it we can use
         ```
 - Issue-2 - SSL Error on Ubuntu Server.
     -   Solution :
-    
+
         ```shell
         sudo cp sslcerts.crt /usr/local/share/ca-certificates
         sudo update-ca-certificates --fresh
