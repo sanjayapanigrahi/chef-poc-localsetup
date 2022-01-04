@@ -1,1 +1,6 @@
-This Folder is a Placeholder for Sync Folder with Guest VM with Host. So You can share Folders, Filed, Certificates. and Can be access on Guest VM /vagrant/ Folder.
+<A Place Holder Folder Synced with Guest VM i.e for Workstations and Nodes>
+Mapping: shared (HostPC)
+         /vagrant(Guest PC i.e on Nodes and Workstation)
+
+Benefits of Using This :
+This Can be used a a Shared folder to shared files, certs and packages to guest machine from host machine.

@@ -4,7 +4,7 @@ Mapping: workspace/chef_repo (HostPC)
 
 Benefits of Using This :
 
-This Can be used a a Shared folder to shared files certs and packages to guest machine from host machine.
+We can do add/edit/update the recipe using our local machine and using an IDE (Code Studio) and it will sync automaticly.
 So, We can paste the contain of che-starter/chef-repo in this folder i.e workspace/chef-repo
 
 
