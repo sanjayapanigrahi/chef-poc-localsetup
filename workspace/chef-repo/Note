@@ -1,1 +1,11 @@
-This Folder is a Placeholder for Sync Folder with Guest VM with Host. So You can share Workspace (chef-starter/chef-repo) and Can be access on Guest VM /home/vagrant/chef-repo Folder.
+<A Place Holder Folder Synced with Guest VM-Workstation>
+Mapping: workspace/chef_repo (HostPC)
+         /home/vagrant/chef-starter/chef_repo(Guest PC i.e Workstation)
+
+Benefits of Using This :
+
+This Can be used a a Shared folder to shared files certs and packages to guest machine from host machine.
+So, We can paste the contain of che-starter/chef-repo in this folder i.e workspace/chef-repo
+
+
+

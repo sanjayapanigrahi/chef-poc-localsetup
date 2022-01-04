@@ -6,7 +6,7 @@ Local Setup (Workstation, Server and Nodes) along with Cookbook with Load Balanc
     - Vagrant
     - Oracle VM VirtualBox Manager
     - Git Bash
-    - IDE (Visual COde Studio or Atom or any)
+    - IDE (Visual Code Studio or Atom or any)
 
 # Chef Server
 ## Hosted Chef Server (api.chef.io)
@@ -22,6 +22,7 @@ To provision nodes, we are using Ubuntu server and the provision is done in auto
 
 ## Provisioning and Login using Vagrant
 -   Ubuntu Server Provisioning
+
     ```vagrantfile 
     Vagrant.configure("2") do |config|
         config.vm.box = "ubuntu/hirsute64"
@@ -34,6 +35,7 @@ To Configure Workstation, we are using Ubuntu server and the installation are do
 
 ## Provisioning and Login using Vagrant
 -   Ubuntu Server Provisioning
+
     ```vagrantfile 
     Vagrant.configure("2") do |config|
         config.vm.box = "ubuntu/hirsute64"
@@ -44,6 +46,7 @@ To Configure Workstation, we are using Ubuntu server and the installation are do
 Note: We can share the Files or Directory using ```synced_folder``` functionality of Vagrant for sharing purpose. This is usefull for sharing the STARTER_KIT we download from chef server.
 
 - Workstation Installation
+
     ```shell
     $install_workstation = <<-'SCRIPT'
     wget https://packages.chef.io/files/stable/chef-workstation/21.10.640/ubuntu/20.04/chef-workstation_21.10.640-1_amd64.deb
@@ -57,14 +60,21 @@ Note: We can share the Files or Directory using ```synced_folder``` functionalit
 - Copy the Starter Kit from /vagrant (synced_folder) and placed in /home/vagrant/ (~) folder and extract it.
 - Navigate to "chef-starter/chef-repo"
 - To connect with chefserver we need to fetch the trusted certificate by using knife command.
-    ```knife ssl fetch```
+
+    ```
+    knife ssl fetch
+    ```
 - Cross validate if the connection is established by using below command.
-    ```knife ssl check```
+
+    ```
+    knife ssl check
+    ```
     > It should show "successfully connected to api.chef.io"
 
 ## Bootstrap a node
 Bootstrap a node will install chef client on the specific node. We can do bootstrap a node from workstation by using below command.
 -  bootstrap <hostname/ip> -N <Name to Display on Server> -U vagrant --sudo
+
     ```
     knife bootstrap lb1 -N lb1 -U vagrant --sudo -y
     ```
@@ -78,24 +88,28 @@ Bootstrap a node will install chef client on the specific node. We can do bootst
 ## Generate Cookbook and upload it to Chef Server
 As our goal is to install Load Balancer and Apache Web Application we need to write recipe.
 
-- To generate a cookbook we can use following command:
+To generate a cookbook we can use following command:
+
     ```
     chef generate cookbook cookbooks/install-lb-haproxy
     ```
     ```
     chef generate cookbook cookbooks/install-app-apache2
     ```
--  to upload it we can use
+To upload it we can use
+
     ```
     knife upload cookbooks/<cookbook name>
     ```
 
 ## Add recipe to a  node as runlist and execution from node
 - We need to add a specific recipe(s) to a node to process the task. By using following command we can add the recipe to the run list.
+
     ```
     knife node run_list add lb1 recipe[install-lb-haproxy]
     ```
 - Upon succesfull addition of recipe as run list for a node we can login to the nodes and installation can be process autmaticly by using below command.
+
     ```
     sudo chef-client
     ```
@@ -108,12 +122,14 @@ As our goal is to install Load Balancer and Apache Web Application we need to wr
     
 - Issue-1 - "ERROR: Train::ClientError: Your SSH Agent has no keys added, and you have not specified a password or a key file"
     -   Solution : 
+
         ```shell
         eval `ssh-agent`
         ssh-add
         ```
 - Issue-2 - SSL Error on Ubuntu Server.
     -   Solution :
+    
         ```shell
         sudo cp sslcerts.crt /usr/local/share/ca-certificates
         sudo update-ca-certificates --fresh
