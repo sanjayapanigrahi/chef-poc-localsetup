@@ -61,14 +61,12 @@ Copy the Starter Kit from /vagrant (synced_folder) and placed in /home/vagrant/ 
 Navigate to "chef-starter/chef-repo"
 To connect with chefserver we need to fetch the trusted certificate by using knife command.
 
-    ```
     knife ssl fetch
-    ```
+
 Cross validate if the connection is established by using below command.
 
-    ```
     knife ssl check
-    ```
+
     > It should show "successfully connected to api.chef.io"
 
 ## Bootstrap a node
@@ -96,14 +94,12 @@ To upload it we can use
 ## Add recipe to a  node as runlist and execution from node
 We need to add a specific recipe(s) to a node to process the task. By using following command we can add the recipe to the run list.
 
-    ```
     knife node run_list add lb1 recipe[install-lb-haproxy]
-    ```
+
 Upon succesfull addition of recipe as run list for a node we can login to the nodes and installation can be process autmaticly by using below command.
 
-    ```
     sudo chef-client
-    ```
+
 It will identify the recipe and do the needfull accordingly.
 
 ## Execute the recipe on multiple nodes using Role based approach.
