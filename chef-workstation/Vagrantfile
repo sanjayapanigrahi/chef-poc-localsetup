@@ -1,20 +1,3 @@
-$do_certs_update = <<-'SCRIPT'
-echo "#################################################Copy SSL Root Certificate (Ubuntu)#################################################"
-sudo cp /vagrant/ZscalerRootCertificate.crt /usr/local/share/ca-certificates
-sudo update-ca-certificates --fresh
-echo "#################################################CA Certificates Refreshed#################################################"
-SCRIPT
-
-$install_workstation = <<-'SCRIPT'
-echo "#################################################Workstation Installation  - START#################################################"
-sudo apt-get update
-sudo apt-get install tree
-wget https://packages.chef.io/files/stable/chef-workstation/21.10.640/ubuntu/20.04/chef-workstation_21.10.640-1_amd64.deb
-dpkg -i chef-workstation_21.10.640-1_amd64.deb
-echo "###########################################Workstation Installation  - SUCCESSFULLY DONE###########################################"
-sudo cp /vagrant/ZscalerRootCertificate.crt /home/vagrant/chef-starter/chef-repo/.chef/trusted_certs
-SCRIPT
-
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/hirsute64"
 
@@ -27,7 +10,7 @@ Vagrant.configure("2") do |config|
     
     config.vm.synced_folder "../shared/", "/vagrant"
     config.vm.synced_folder "../workspace/", "/home/vagrant/chef-starter"
-    config.vm.provision "shell", inline: $do_certs_update
-    config.vm.provision "shell", inline: $install_workstation
+    config.vm.provision "shell", path: "../scripts/update-ssl-certs.sh"
+    config.vm.provision "shell", path: "../scripts/install-chef-workstation.sh"
   end
 end
